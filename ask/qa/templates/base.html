@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title%}Q&A{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    {% block extrahead %}{% endblock %}
+</head>
+<body>
+    <header>
+        <div class="logo">Q&A</div>
+        <menu>
+            <li><a href="{% url 'home' %}">New</a></li>
+            <li><a href="{% url 'popular' %}">Popular</a></li>
+            <li><a href="{% url 'ask' %}">Ask</a></li>
+        </menu>
+        <div class="user"></div>
+    </header>
+    {% block content %}{% endblock %}
+    <footer>&copy; Volodymyr Onufryk</footer>
+</body>
+</html>

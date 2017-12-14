@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}
+    {{ block.super }} – new questions
+{% endblock %}
+
+{% block content %}
+    <div class="questions">
+    {% for obj in questions %}
+        <div class="question">
+            <a href="{{ obj.get_url }}">{{ obj }}</a>
+            <div class="date">{{ obj.added_at|date:"d.m.Y" }}</div>
+        </div>
+    {% endfor %}
+    </div>
+
+    <nav><ul class="pagination">
+        {% for p in paginator.page_range %}
+            {% if p == page.number %}
+                <li class="active">
+            {% else %}
+                <li>
+            {% endif %}
+            <a href="{{ paginator.baseurl }}{{ p }}">{{ p }}</a>
+            </li>
+        {% endfor %}
+    </ul></nav>
+
+{% endblock %}

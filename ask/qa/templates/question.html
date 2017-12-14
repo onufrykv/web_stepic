@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}
+    {{question}}
+{% endblock %}
+
+{% block content %}
+    <div class="content">
+        <div class="question-det">
+            <h1>{{ question }}</h1>
+            <div class="q_info">Created at {{ question.added_at }} by {{question.author}}. Rating: {{question.rating}}</div>
+            <div class="q_text">{{ question.text }}</div>
+        </div>
+        <div class="answers">
+            <h2>Answers</h2>
+            {% for a in question.answer_set.all %}
+                <div class="answer-det">
+                    <div class="a_info">Answered by {{a.author}} at {{a.added_at}}</div>
+                    <div>{{a.text}}</div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}
