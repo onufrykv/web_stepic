@@ -9,6 +9,7 @@
         <div class="question">
             <a href="{{ obj.get_url }}">{{ obj }}</a>
             <div class="date">{{ obj.added_at|date:"d.m.Y" }}</div>
+            <div>{{ obj.id }}</div>
         </div>
     {% endfor %}
     </div>

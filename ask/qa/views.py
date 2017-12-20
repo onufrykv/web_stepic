@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.shortcuts import render, get_object_or_404
-from django.http import HttpResponse, Http404
+from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.decorators.http import require_GET
 
 from qa.models import Question
+from qa.forms import AskForm, AnswerForm
 
 
 @require_GET
@@ -37,14 +38,36 @@ def signup(request):
 
 
 def question(request, num_question):
-    question = get_object_or_404(Question, id=num_question)
-    return render(request, 'question.html', {
-        'question': question,
-    })
+    quest = get_object_or_404(Question, id=num_question)
+
+    if request.method == "POST":
+        form = AnswerForm(request.POST)
+        if form.is_valid():
+            form._user = request.user
+            form.save()
+            url = quest.get_url()
+            return HttpResponseRedirect(url)
+    else:
+        form = AnswerForm(initial={'question': quest.id})
+
+    return render(request, 'question.html', {'question': quest,
+                                             'form': form,
+                                             })
 
 
 def ask(request):
-    return HttpResponse("Ask me something")
+    if request.method == "POST":
+        form = AskForm(request.POST)
+        if form.is_valid():
+            form._user = request.user
+            quest = form.save()
+            url = quest.get_url()
+            return HttpResponseRedirect(url)
+    else:
+        form = AskForm()
+    return render(request, "ask.html", {"form": form,
+                                        "user": request.user,
+                                        })
 
 
 @require_GET

@@ -25,9 +25,6 @@ class Question(models.Model):
     def get_url(self):
         return "/question/{}/".format(self.id)
 
-    class Meta:
-        ordering = ('-added_at',)
-
 
 class Answer(models.Model):
     text = models.TextField(default="")
@@ -37,6 +34,3 @@ class Answer(models.Model):
 
     def __str__(self):
         return self.text
-
-    class Meta:
-        ordering = ('-added_at',)

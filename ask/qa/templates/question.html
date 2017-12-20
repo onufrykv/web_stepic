@@ -19,5 +19,16 @@
                 </div>
             {% endfor %}
         </div>
+        <div class="new-answer">
+            <form method="post" action="{{ question.get_url }}">
+                <fieldset>
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                </fieldset>
+                <button type="submit">Send</button>
+            </form>
+        </div>
+
+
     </div>
 {% endblock %}
