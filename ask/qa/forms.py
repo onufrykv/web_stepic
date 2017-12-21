@@ -1,5 +1,7 @@
 from django import forms
 from qa.models import Question, Answer
+from django.contrib.auth.models import User
+from django.contrib.auth.hashers import make_password
 
 
 class AskForm(forms.Form):
@@ -10,8 +12,8 @@ class AskForm(forms.Form):
         pass
 
     def save(self):
-        self.cleaned_data['author'] = self._user
         question = Question(**self.cleaned_data)
+        question.author_id = self._user.id
         question.save()
         return question
 
@@ -36,3 +38,47 @@ class AnswerForm(forms.Form):
         answer = Answer(**self.cleaned_data)
         answer.save()
         return answer
+
+
+class SignupForm(forms.Form):
+    username = forms.CharField(max_length=100)
+    email = forms.EmailField(max_length=30)
+    password = forms.CharField(widget=forms.PasswordInput())
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        try:
+            User.objects.get(username=username)
+            raise forms.ValidationError('User with such login already exists')
+        except User.DoesNotExist:
+            pass
+        return username
+
+    def clean_password(self):
+        password = self.cleaned_data.get('password')
+        password = make_password(password)
+        return password
+
+    def clean(self):
+        pass
+
+    def save(self):
+        user = User(**self.cleaned_data)
+        user.save()
+        return user
+
+
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=100)
+    password = forms.CharField(widget=forms.PasswordInput)
+
+    def clean(self):
+        username = self.cleaned_data.get('username')
+        password = self.cleaned_data.get('password')
+        message = 'Wrong Username or password'
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            raise forms.ValidationError(message)
+        if not user.check_password(password):
+            raise forms.ValidationError(message)

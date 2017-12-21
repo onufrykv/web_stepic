@@ -4,9 +4,10 @@ from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.views.decorators.http import require_GET
+from django.contrib.auth import authenticate, login
 
 from qa.models import Question
-from qa.forms import AskForm, AnswerForm
+from qa.forms import AskForm, AnswerForm, SignupForm, LoginForm
 
 
 @require_GET
@@ -29,12 +30,42 @@ def home(request):
     })
 
 
-def login(request):
-    return HttpResponse("Here you can login")
+def login_u(request):
+    if request.method == "POST":
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            usname = form.cleaned_data['username']
+            password = form.cleaned_data['password']
+            user = authenticate(username=usname, password=password)
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+            return HttpResponseRedirect('/')
+    else:
+        form = LoginForm()
+    return render(request, 'login.html', {'form': form,
+                                          'user': request.user,
+                                          'session': request.session,
+                                           })
 
 
 def signup(request):
-    return HttpResponse("Here you can Sign up")
+    if request.method == "POST":
+        form = SignupForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            usname = form.cleaned_data["username"]
+            user = authenticate(username=usname, password=request.POST['password'])
+            if user is not None:
+                if user.is_active:
+                    login(request, user)
+            return HttpResponseRedirect('/')
+    else:
+        form = SignupForm()
+    return render(request, 'singup.html', {'form': form,
+                                           'user': request.user,
+                                           'session': request.session,
+                                           })
 
 
 def question(request, num_question):

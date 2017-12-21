@@ -9,13 +9,21 @@
 </head>
 <body>
     <header>
-        <div class="logo">Q&A</div>
+        <a href="/" class="logo">Q&A</a>
         <menu>
             <li><a href="{% url 'home' %}">New</a></li>
             <li><a href="{% url 'popular' %}">Popular</a></li>
             <li><a href="{% url 'ask' %}">Ask</a></li>
         </menu>
-        <div class="user"></div>
+        <div class="user">
+            {% if user.id %}
+                User: {{ user }}
+                <a href="/logout/">Logout</a>
+            {% else %}
+                <a href="/login/">login</a>
+                <a href="/signup">Sign Up</a>
+            {% endif %}
+        </div>
     </header>
     {% block content %}{% endblock %}
     <footer>&copy; Volodymyr Onufryk</footer>
